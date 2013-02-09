@@ -1,0 +1,9 @@
+UNIT test4;
+
+INTERFACE
+    BEGIN
+    END
+
+IMPLEMENTATION
+    BEGIN
+    END.

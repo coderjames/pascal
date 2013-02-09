@@ -1,0 +1,181 @@
+start = ONE_AND_ONLY;
+
+token {
+    SEMICOLON;
+
+    PAREN_OPEN;    /* ( */
+    PAREN_CLOSE;   /* ) */
+
+    BRACKET_OPEN;  /* [ */
+    BRACKET_CLOSE; /* ] */
+
+    /* operators */
+    PLUS;
+    MINUS;
+    STAR;
+    SLASH;
+    CAROT;
+    AT;
+    DOTDOT;
+    PERIOD;
+    COMMA;
+    LESS_EQUAL;
+    GREATER_EQUAL;
+    EQUALS;
+    NOT_EQUAL;
+    LESS_THAN;
+    GREATER_THAN;
+    OR;
+    AND;
+    DIV;
+    MOD;
+    NIL;
+    NOT;
+    ASSIGNMENT;
+    COLON;
+
+    /* keywords */
+    PROGRAM;
+    BEGIN;
+    END;
+    VAR;
+    ARRAY;
+    OF;
+    RECORD;
+    CASE;
+    SET;
+    FILE;
+    PROCEDURE;
+    FUNCTION;
+    LABEL;
+    CONST;
+    FORWARD;
+    GOTO;
+    WHILE;
+    DO;
+    REPEAT;
+    UNTIL;
+    FOR;
+    DOWNTO;
+    TO;
+    IF;
+    THEN;
+    ELSE;
+    WITH;
+    BREAK;
+    CONTINUE;
+    TYPE;
+    UNIT;
+    INTERFACE;
+    IMPLEMENTATION;
+    USES;
+
+    /* native types */
+    TYPE_INTEGER;
+    TYPE_STRING;
+    TYPE_BOOLEAN;
+    TYPE_CHAR;
+
+    /* simple elements */
+    STRING;
+    NUMBER;
+    IDENTIFIER;
+    BOOLEAN;
+}
+
+
+mode ONE_AND_ONLY :
+<skip:       [ \r\n\t]>   /* skip whitespace */
+<skip_range: "/*" "*/">   /* skip C-style comments */
+<skip_range: "{" "}">     /* skip Pascal-style comments */
+<skip_range: "//" "\n">   /* skip C++-style comments */
+{
+    ";"     => QUEX_TKN_SEMICOLON;
+
+    "("     => QUEX_TKN_PAREN_OPEN;
+    ")"     => QUEX_TKN_PAREN_CLOSE;
+
+    "["     => QUEX_TKN_BRACKET_OPEN;
+    "]"     => QUEX_TKN_BRACKET_CLOSE;
+
+    "+"     => QUEX_TKN_PLUS;
+    "-"     => QUEX_TKN_MINUS;
+    "*"     => QUEX_TKN_STAR;
+    "/"     => QUEX_TKN_SLASH;
+    "^"     => QUEX_TKN_CAROT;
+    "@"     => QUEX_TKN_AT;
+    ".."    => QUEX_TKN_DOTDOT;
+    "."     => QUEX_TKN_PERIOD;
+    ","     => QUEX_TKN_COMMA;
+    "<="    => QUEX_TKN_LESS_EQUAL;
+    ">="    => QUEX_TKN_GREATER_EQUAL;
+    "="     => QUEX_TKN_EQUALS;
+    "<>"    => QUEX_TKN_NOT_EQUAL;
+    "<"     => QUEX_TKN_LESS_THAN;
+    ">"     => QUEX_TKN_GREATER_THAN;
+    "OR"    => QUEX_TKN_OR;
+    "AND"   => QUEX_TKN_AND;
+    "DIV"   => QUEX_TKN_DIV;
+    "MOD"   => QUEX_TKN_MOD;
+    "NIL"   => QUEX_TKN_NIL;
+    "NOT"   => QUEX_TKN_NOT;
+    ":="    => QUEX_TKN_ASSIGNMENT;
+    ":"     => QUEX_TKN_COLON;
+
+    "PROGRAM"    => QUEX_TKN_PROGRAM;
+    "BEGIN"      => QUEX_TKN_BEGIN;
+    "END"        => QUEX_TKN_END;
+    "VAR"        => QUEX_TKN_VAR;
+    "ARRAY"      => QUEX_TKN_ARRAY;
+    "OF"         => QUEX_TKN_OF;
+    "RECORD"     => QUEX_TKN_RECORD;
+    "CASE"       => QUEX_TKN_CASE;
+    "SET"        => QUEX_TKN_SET;
+    "FILE"       => QUEX_TKN_FILE;
+    "PROCEDURE"  => QUEX_TKN_PROCEDURE;
+    "FUNCTION"   => QUEX_TKN_FUNCTION;
+    "LABEL"      => QUEX_TKN_LABEL;
+    "CONST"      => QUEX_TKN_CONST;
+    "FORWARD"    => QUEX_TKN_FORWARD;
+    "GOTO"       => QUEX_TKN_GOTO;
+    "WHILE"      => QUEX_TKN_WHILE;
+    "DO"         => QUEX_TKN_DO;
+    "REPEAT"     => QUEX_TKN_REPEAT;
+    "UNTIL"      => QUEX_TKN_UNTIL;
+    "FOR"        => QUEX_TKN_FOR;
+    "DOWNTO"     => QUEX_TKN_DOWNTO;
+    "TO"         => QUEX_TKN_TO;
+    "IF"         => QUEX_TKN_IF;
+    "THEN"       => QUEX_TKN_THEN;
+    "ELSE"       => QUEX_TKN_ELSE;
+    "WITH"       => QUEX_TKN_WITH;
+    "BREAK"      => QUEX_TKN_BREAK;
+    "CONTINUE"   => QUEX_TKN_CONTINUE;
+    "TYPE"       => QUEX_TKN_TYPE;
+    "UNIT"       => QUEX_TKN_UNIT;
+    "INTERFACE"  => QUEX_TKN_INTERFACE;
+    "IMPLEMENTATION"   => QUEX_TKN_IMPLEMENTATION;
+    "USES"       => QUEX_TKN_USES;
+
+    "INTEGER"   => QUEX_TKN_TYPE_INTEGER;
+    "STRING"    => QUEX_TKN_TYPE_STRING;
+    "BOOLEAN"   => QUEX_TKN_TYPE_BOOLEAN;
+    "CHAR"      => QUEX_TKN_TYPE_CHAR;
+
+    "TRUE"      => QUEX_TKN_BOOLEAN(Lexeme);
+    "FALSE"     => QUEX_TKN_BOOLEAN(Lexeme);
+
+    // String:
+    //    single-quote ' followed by either \' or something different from ' and then a final '
+    "'"(\\'|[^'])*"'" => QUEX_TKN_STRING(Lexeme);
+
+    "$"[0-9a-fA-F]+ => QUEX_TKN_NUMBER(Lexeme); /* hexadecimal numbers start with $ */
+    [0-9]+          => QUEX_TKN_NUMBER(Lexeme); /* other numbers don't */
+    [_a-zA-Z][_a-zA-Z0-9]*  => QUEX_TKN_IDENTIFIER(Lexeme);
+
+    <<EOF>>  => QUEX_TKN_TERMINATION;
+    <<FAIL>> {
+    std::cout << "PARSE FAILURE: Lexeme='" << Lexeme << "'" << std::endl;
+    RETURN;
+    }
+}
